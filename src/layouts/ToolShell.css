@@ -70,9 +70,9 @@
   }
 }
 
-/* 短内容时页脚贴在滚动区底；max(…,auto) 保证与主内容之间至少留一截间距 */
+/* 主区域 flex:1 占满后，页脚用固定上边距与内容留白（margin-top:auto 与 flex:1 兄弟并存时往往挤不出空隙） */
 .tool-shell-body .eth-tool-footer {
-  margin-top: max(1.5rem, auto);
-  padding-top: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
   flex-shrink: 0;
 }

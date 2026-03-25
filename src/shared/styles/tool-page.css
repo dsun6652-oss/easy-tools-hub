@@ -198,6 +198,12 @@
   overflow: hidden;
 }
 
+/* 单栏工具（如 UUID、随机密码）：根下直接 .panel 无 editor-container 时占满剩余高度，便于页脚吸底 */
+.eth-tool-page > .panel {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 .eth-tool-page .panel-header {
   display: flex;
   align-items: center;
