@@ -1,176 +1,13 @@
-.color-tool {
-  display: flex;
-  flex-direction: column;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0.75rem 1rem 1.25rem;
-}
+/* 颜色工具专有；页面壳、工具栏、双栏网格与 .panel 见 shared/styles/tool-page.css */
 
-@media (min-width: 768px) {
-  .color-tool {
-    padding: 1rem 1.5rem 1.5rem;
-  }
-}
-
-.toolbar {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  margin-bottom: 0.65rem;
-}
-
-@media (min-width: 768px) {
-  .toolbar {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-}
-
-.toolbar-left,
-.toolbar-right {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.toolbar-right {
-  justify-content: flex-end;
-}
-
-.btn {
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  border: 1px solid transparent;
-  font-family: inherit;
-}
-
-@media (min-width: 768px) {
-  .btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-  }
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background: var(--accent);
-  color: var(--bg-primary);
-  border-color: var(--accent);
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
-}
-
-.btn-secondary {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border-color: var(--border);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: #30363d;
-  border-color: var(--text-secondary);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-}
-
-.btn-ghost:hover:not(:disabled) {
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
-}
-
-.btn-copy {
-  padding: 0.35rem 0.6rem;
-  font-size: 0.75rem;
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  border-color: var(--border);
-}
-
-.btn-copy:hover {
-  color: var(--text-primary);
-  background: #30363d;
-}
-
-.error-banner {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: rgba(248, 81, 73, 0.15);
-  border: 1px solid rgba(248, 81, 73, 0.3);
-  border-radius: 6px;
-  color: var(--error);
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
-}
-
-.error-icon {
-  font-weight: 700;
-  color: var(--error);
-}
-
-.color-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  flex: 1 1 0;
-  min-height: 0;
-}
-
-@media (min-width: 900px) {
-  .color-container {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.panel {
-  display: flex;
-  flex-direction: column;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.6rem 1rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--border);
-}
-
-.input-row {
+.color-tool .input-row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 1rem;
 }
 
-.color-input {
+.color-tool .color-input {
   flex: 1;
   padding: 0.6rem 0.75rem;
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
@@ -183,16 +20,16 @@
   transition: border-color 0.15s ease;
 }
 
-.color-input:focus {
+.color-tool .color-input:focus {
   border-color: var(--accent);
 }
 
-.color-input::placeholder {
+.color-tool .color-input::placeholder {
   color: var(--text-secondary);
   opacity: 0.6;
 }
 
-.picker-overlay {
+.color-tool .picker-overlay {
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -203,7 +40,7 @@
   padding: 1rem;
 }
 
-.picker-popover {
+.color-tool .picker-popover {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -211,7 +48,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
-.picker-header {
+.color-tool .picker-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -221,39 +58,39 @@
   color: var(--text-primary);
 }
 
-.picker-close {
+.color-tool .picker-close {
   padding: 0.35rem 0.6rem;
   font-size: 0.8rem;
 }
 
-.picker-colorful.react-colorful {
+.color-tool .picker-colorful.react-colorful {
   width: 220px;
   height: 180px;
 }
 
-.picker-colorful .react-colorful__saturation {
+.color-tool .picker-colorful .react-colorful__saturation {
   border-radius: 8px 8px 0 0;
   border-bottom-color: var(--border);
   box-shadow: inset 0 0 0 1px var(--border);
 }
 
-.picker-colorful .react-colorful__hue {
+.color-tool .picker-colorful .react-colorful__hue {
   height: 20px;
   border-radius: 0 0 8px 8px;
   margin-top: 8px;
 }
 
-.picker-colorful .react-colorful__pointer {
+.color-tool .picker-colorful .react-colorful__pointer {
   border-color: var(--border);
   background-color: var(--bg-primary);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-.picker-colorful .react-colorful__pointer-fill {
+.color-tool .picker-colorful .react-colorful__pointer-fill {
   border: 2px solid var(--text-primary);
 }
 
-.color-preview {
+.color-tool .color-preview {
   flex-shrink: 0;
   width: 40px;
   height: 40px;
@@ -261,17 +98,17 @@
   border: 1px solid var(--border);
 }
 
-.color-preview-clickable {
+.color-tool .color-preview-clickable {
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.color-preview-clickable:hover {
+.color-tool .color-preview-clickable:hover {
   transform: scale(1.05);
   box-shadow: 0 0 0 2px var(--accent);
 }
 
-.color-preview-placeholder {
+.color-tool .color-preview-placeholder {
   cursor: pointer;
   background: repeating-linear-gradient(
     -45deg,
@@ -283,38 +120,51 @@
   border: 1px dashed var(--border);
 }
 
-.color-preview-placeholder:hover {
+.color-tool .color-preview-placeholder:hover {
   border-color: var(--accent);
   background: var(--bg-tertiary);
 }
 
-.preview-color-block-clickable {
+.color-tool .preview-color-block-clickable {
   cursor: pointer;
   transition: box-shadow 0.15s ease;
 }
 
-.preview-color-block-clickable:hover {
+.color-tool .preview-color-block-clickable:hover {
   box-shadow: 0 0 0 3px var(--accent);
 }
 
-.output-panel .panel-header {
+.color-tool .btn-copy {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.color-tool .btn-copy:hover {
+  color: var(--text-primary);
+  background: #30363d;
+}
+
+.color-tool .output-panel .panel-header {
   border-bottom: 1px solid var(--border);
 }
 
-.output-list {
+.color-tool .output-list {
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.output-item {
+.color-tool .output-item {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
 }
 
-.output-label {
+.color-tool .output-label {
   font-size: 0.7rem;
   font-weight: 500;
   color: var(--text-secondary);
@@ -322,13 +172,13 @@
   letter-spacing: 0.05em;
 }
 
-.output-value-row {
+.color-tool .output-value-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.output-value {
+.color-tool .output-value {
   flex: 1;
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: 0.9rem;
@@ -339,13 +189,13 @@
   overflow-x: auto;
 }
 
-.placeholder {
+.color-tool .output-list .placeholder {
   color: var(--text-secondary);
   opacity: 0.6;
   font-size: 0.875rem;
 }
 
-.preview-block {
+.color-tool .preview-block {
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
@@ -353,14 +203,14 @@
   gap: 0.5rem;
 }
 
-.preview-color-block {
+.color-tool .preview-color-block {
   width: 120px;
   height: 80px;
   border-radius: 8px;
   border: 1px solid var(--border);
 }
 
-.preview-label {
+.color-tool .preview-label {
   font-size: 0.75rem;
   color: var(--text-secondary);
 }

@@ -1,0 +1,320 @@
+/**
+ * 工具页公共布局与控件（需包在 .eth-tool-page 根节点内，避免污染全局）
+ *
+ * 新工具优先使用此处类名，避免再建整页 CSS：
+ * - .toolbar / .toolbar--responsive、.btn*、.editor-container、.panel*
+ * - .eth-tool-options        选项条（横排表单）
+ * - .eth-tool-field-num      label + 窄数字框
+ * - .eth-tool-check          label + checkbox
+ * - .panel-output--emphasis  单栏输出略放大（密码等）
+ */
+
+.eth-tool-page {
+  display: flex;
+  flex-direction: column;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .eth-tool-page {
+    padding: 1rem 1.5rem 1.5rem;
+  }
+}
+
+/* —— 工具栏 —— */
+.eth-tool-page .toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.65rem;
+}
+
+.eth-tool-page .toolbar.toolbar--responsive {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
+}
+
+@media (min-width: 768px) {
+  .eth-tool-page .toolbar.toolbar--responsive {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+.eth-tool-page .toolbar-left,
+.eth-tool-page .toolbar-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.eth-tool-page .toolbar-right {
+  justify-content: flex-end;
+}
+
+/* —— 按钮 —— */
+.eth-tool-page .btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  font-family: inherit;
+}
+
+.eth-tool-page .toolbar.toolbar--responsive .btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+@media (min-width: 768px) {
+  .eth-tool-page .toolbar.toolbar--responsive .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+.eth-tool-page .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.eth-tool-page .btn-primary {
+  background: var(--accent);
+  color: var(--bg-primary);
+  border-color: var(--accent);
+}
+
+.eth-tool-page .btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.eth-tool-page .btn-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.eth-tool-page .btn-secondary:hover:not(:disabled) {
+  background: #30363d;
+  border-color: var(--text-secondary);
+}
+
+.eth-tool-page .btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.eth-tool-page .btn-ghost:hover:not(:disabled) {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+/* 行内 label + select（缩进、单位等） */
+.eth-tool-page .indent-control,
+.eth-tool-page .unit-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.eth-tool-page .toolbar.toolbar--responsive .indent-control,
+.eth-tool-page .toolbar.toolbar--responsive .unit-control {
+  font-size: 0.8rem;
+}
+
+@media (min-width: 768px) {
+  .eth-tool-page .toolbar.toolbar--responsive .indent-control,
+  .eth-tool-page .toolbar.toolbar--responsive .unit-control {
+    font-size: 0.875rem;
+  }
+}
+
+.eth-tool-page .indent-control select,
+.eth-tool-page .unit-control select {
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* —— 错误条 —— */
+.eth-tool-page .error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(248, 81, 73, 0.15);
+  border: 1px solid rgba(248, 81, 73, 0.3);
+  border-radius: 6px;
+  color: var(--error);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.eth-tool-page .error-icon {
+  font-weight: 700;
+  color: var(--error);
+}
+
+/* —— 双栏编辑区 —— */
+.eth-tool-page .editor-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .eth-tool-page .editor-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.eth-tool-page .panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.eth-tool-page .panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+}
+
+.eth-tool-page .panel-input,
+.eth-tool-page .panel-output {
+  flex: 1;
+  min-height: clamp(140px, 26vh, 280px);
+  padding: 0.75rem 1rem;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.eth-tool-page .panel-input {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: none;
+  resize: none;
+  outline: none;
+}
+
+.eth-tool-page .panel-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.eth-tool-page .panel-output {
+  background: var(--bg-primary);
+  margin: 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.eth-tool-page .panel-output .placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* 小标签（单位、输出模式等） */
+.eth-tool-page .unit-badge,
+.eth-tool-page .output-mode-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  text-transform: none;
+}
+
+/* —— 选项条（长度、复选框等横排） —— */
+.eth-tool-page .eth-tool-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1.25rem;
+  margin-bottom: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.eth-tool-page .eth-tool-field-num {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.eth-tool-page .eth-tool-field-num input {
+  width: 4.25rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+
+.eth-tool-page .eth-tool-field-num input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.eth-tool-page .eth-tool-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.eth-tool-page .eth-tool-check input {
+  width: 0.95rem;
+  height: 0.95rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* 单栏输出强调（随机密码等） */
+.eth-tool-page .panel-output.panel-output--emphasis {
+  min-height: clamp(100px, 18vh, 200px);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}

@@ -46,10 +46,8 @@
   color: var(--text-secondary);
 }
 
-/* 至少占满滚动视口一屏高度，主区域 flex:1 才能把页脚顶到底部 */
-.tool-shell-body > .json-tool,
-.tool-shell-body > .color-tool,
-.tool-shell-body > .timestamp-tool {
+/* 至少占满滚动视口一屏高度，主区域 flex:1 才能把页脚顶到底部（各工具根节点均为 .eth-tool-page） */
+.tool-shell-body > .eth-tool-page {
   min-height: 100%;
   box-sizing: border-box;
 }

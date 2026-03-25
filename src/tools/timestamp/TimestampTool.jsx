@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from 'react'
 import { ToolPageHeader } from '@hub/shared/components/ToolPageHeader'
 import { ToolFooter } from '@hub/shared/components/ToolFooter'
+import { ToolErrorBanner } from '@hub/shared/components/ToolErrorBanner'
+import { useCopyWithFeedback } from '@hub/shared/hooks/useCopyWithFeedback'
 import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
 import { locales } from './locales'
-import './TimestampTool.css'
 
 function timestampToBeijing(ts, isMs = true) {
   const ms = isMs ? Number(ts) : Number(ts) * 1000
@@ -36,7 +37,6 @@ export default function TimestampTool() {
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
-  const [copied, setCopied] = useState(false)
 
   const convert = useCallback(() => {
     setError('')
@@ -69,17 +69,8 @@ export default function TimestampTool() {
     convert()
   }, [input, mode, unit, convert])
 
-  const copyToClipboard = useCallback(async () => {
-    const text = output || input
-    if (!text) return
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      setError(t('errorCopy'))
-    }
-  }, [output, input, t])
+  const onCopyError = useCallback(() => setError(t('errorCopy')), [t])
+  const { copied, copy } = useCopyWithFeedback(onCopyError)
 
   const clearAll = useCallback(() => {
     setInput('')
@@ -95,10 +86,10 @@ export default function TimestampTool() {
   const copyTarget = output || input
 
   return (
-    <div className="timestamp-tool">
+    <div className="eth-tool-page">
       <ToolPageHeader t={t} />
 
-      <div className="toolbar">
+      <div className="toolbar toolbar--responsive">
         <div className="toolbar-left">
           <button
             type="button"
@@ -128,7 +119,7 @@ export default function TimestampTool() {
           )}
         </div>
         <div className="toolbar-right">
-          <button type="button" onClick={copyToClipboard} className="btn btn-ghost" disabled={!copyTarget}>
+          <button type="button" onClick={() => copy(copyTarget)} className="btn btn-ghost" disabled={!copyTarget}>
             {copied ? t('copied') : t('copy')}
           </button>
           <button type="button" onClick={clearAll} className="btn btn-ghost">
@@ -137,12 +128,7 @@ export default function TimestampTool() {
         </div>
       </div>
 
-      {error && (
-        <div className="error-banner">
-          <span className="error-icon">!</span>
-          {error}
-        </div>
-      )}
+      <ToolErrorBanner message={error} />
 
       <div className="editor-container">
         <div className="panel">

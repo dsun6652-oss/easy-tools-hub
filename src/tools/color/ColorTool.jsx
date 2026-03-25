@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { HexColorPicker } from 'react-colorful'
 import { ToolPageHeader } from '@hub/shared/components/ToolPageHeader'
 import { ToolFooter } from '@hub/shared/components/ToolFooter'
+import { ToolErrorBanner } from '@hub/shared/components/ToolErrorBanner'
 import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
 import { locales } from './locales'
 import './ColorTool.css'
@@ -226,7 +227,7 @@ export default function ColorTool() {
   const hasResult = hex || rgb || hsl
 
   return (
-    <div className="color-tool">
+    <div className="eth-tool-page color-tool">
       <ToolPageHeader t={t} />
 
       {pickerOpen && (
@@ -247,7 +248,7 @@ export default function ColorTool() {
         </div>
       )}
 
-      <div className="toolbar">
+      <div className="toolbar toolbar--responsive">
         <div className="toolbar-left">
           <button type="button" onClick={resetToDefault} className="btn btn-secondary">
             {t('resetExample')}
@@ -260,14 +261,9 @@ export default function ColorTool() {
         </div>
       </div>
 
-      {error && (
-        <div className="error-banner">
-          <span className="error-icon">!</span>
-          {error}
-        </div>
-      )}
+      <ToolErrorBanner message={error} />
 
-      <div className="color-container">
+      <div className="editor-container">
         <div className="panel input-panel">
           <div className="panel-header">
             <span>{t('inputColor')}</span>

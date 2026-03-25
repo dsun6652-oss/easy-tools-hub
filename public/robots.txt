@@ -1,0 +1,5 @@
+# 部署在子路径 /easy-tools-hub/ 时，与 package.json homepage 保持一致
+User-agent: *
+Allow: /
+
+Sitemap: https://dsun6652-oss.github.io/easy-tools-hub/sitemap.xml

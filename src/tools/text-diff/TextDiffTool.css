@@ -1,0 +1,81 @@
+/* 差异行高亮（其余用 tool-page.css） */
+
+.text-diff-tool .diff-pre {
+  margin: 0;
+  flex: 1;
+  min-height: clamp(140px, 26vh, 280px);
+  padding: 0.75rem 1rem;
+  overflow: auto;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.text-diff-tool .diff-line {
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: 1.6em;
+  box-sizing: border-box;
+}
+
+.text-diff-tool .diff-line--eq {
+  border-left: 2px solid transparent;
+  padding-left: 0.35rem;
+  margin-left: -2px;
+}
+
+.text-diff-tool .diff-line--del {
+  background: rgba(248, 81, 73, 0.2);
+  border-left: 2px solid var(--error);
+  padding-left: 0.35rem;
+  margin-left: -2px;
+}
+
+.text-diff-tool .diff-line--add {
+  background: rgba(63, 185, 80, 0.2);
+  border-left: 2px solid var(--success);
+  padding-left: 0.35rem;
+  margin-left: -2px;
+}
+
+.text-diff-tool .diff-line--pad {
+  background: var(--bg-tertiary);
+  opacity: 0.45;
+  border-left: 2px solid var(--border);
+  padding-left: 0.35rem;
+  margin-left: -2px;
+}
+
+.text-diff-tool .diff-line--word {
+  border-left: 2px solid var(--border);
+  padding-left: 0.35rem;
+  margin-left: -2px;
+  min-height: 1.6em;
+}
+
+.text-diff-tool .word-token {
+  white-space: pre-wrap;
+}
+
+.text-diff-tool .word-token--del {
+  background: rgba(248, 81, 73, 0.28);
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.text-diff-tool .word-token--add {
+  background: rgba(63, 185, 80, 0.28);
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.text-diff-tool .diff-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.5rem;
+  padding: 0 0.15rem;
+}

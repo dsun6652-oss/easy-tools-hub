@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect } from 'react'
 import { ToolPageHeader } from '@hub/shared/components/ToolPageHeader'
 import { ToolFooter } from '@hub/shared/components/ToolFooter'
+import { ToolErrorBanner } from '@hub/shared/components/ToolErrorBanner'
+import { useCopyWithFeedback } from '@hub/shared/hooks/useCopyWithFeedback'
 import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
 import { locales } from './locales'
 import './JsonTool.css'
@@ -11,7 +13,6 @@ export default function JsonTool() {
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
   const [indent, setIndent] = useState(2)
-  const [copied, setCopied] = useState(false)
   const [validationError, setValidationError] = useState('')
   const [outputMode, setOutputMode] = useState('json')
 
@@ -91,16 +92,8 @@ export default function JsonTool() {
     }
   }, [input, t])
 
-  const copyToClipboard = useCallback(async () => {
-    if (!output) return
-    try {
-      await navigator.clipboard.writeText(output)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      setError(t('errorCopy'))
-    }
-  }, [output, t])
+  const onCopyError = useCallback(() => setError(t('errorCopy')), [t])
+  const { copied, copy } = useCopyWithFeedback(onCopyError)
 
   const downloadFile = useCallback(() => {
     if (!output) return
@@ -150,7 +143,7 @@ export default function JsonTool() {
   }
 
   return (
-    <div className="json-tool">
+    <div className="eth-tool-page json-tool">
       <ToolPageHeader t={t} />
 
       <div className="toolbar">
@@ -177,7 +170,7 @@ export default function JsonTool() {
           <button type="button" onClick={downloadFile} className="btn btn-secondary" disabled={!output}>
             {t('download')}
           </button>
-          <button type="button" onClick={copyToClipboard} className="btn btn-ghost" disabled={!output}>
+          <button type="button" onClick={() => copy(output)} className="btn btn-ghost" disabled={!output}>
             {copied ? t('copied') : t('copy')}
           </button>
           <button type="button" onClick={clearAll} className="btn btn-ghost">
@@ -186,12 +179,7 @@ export default function JsonTool() {
         </div>
       </div>
 
-      {error && (
-        <div className="error-banner">
-          <span className="error-icon">!</span>
-          {error}
-        </div>
-      )}
+      <ToolErrorBanner message={error} />
 
       <div className="editor-container">
         <div className="panel">
