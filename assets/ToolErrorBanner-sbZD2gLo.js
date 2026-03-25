@@ -1,0 +1,1 @@
+import{j as n}from"./index-BFWJz7oc.js";function o({message:r}){return r?n.jsxs("div",{className:"error-banner",role:"alert",children:[n.jsx("span",{className:"error-icon","aria-hidden":!0,children:"!"}),r]}):null}export{o as T};
