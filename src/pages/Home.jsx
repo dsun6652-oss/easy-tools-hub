@@ -34,10 +34,6 @@ export default function Home() {
           )
         })}
       </ul>
-
-      <footer className="home-footer">
-        <span>{site.homeFooter}</span>
-      </footer>
     </div>
   )
 }

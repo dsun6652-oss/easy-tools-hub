@@ -1,19 +1,36 @@
+/* 占满视口：顶栏固定高度，下方区域单独滚动，避免「顶栏 + 工具各要 100vh」叠出双屏高度 */
+.tool-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
 .tool-shell-nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.65rem 1rem;
-  background: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+  padding: 0.45rem 0.85rem;
+  background: color-mix(in srgb, var(--bg-primary) 94%, transparent);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
 }
 
+.tool-shell-body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
 .tool-shell-back {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: var(--accent);
   text-decoration: none;
 }
@@ -24,7 +41,40 @@
 }
 
 .tool-fallback {
-  padding: 2rem;
+  padding: 1.5rem;
   text-align: center;
   color: var(--text-secondary);
+}
+
+/* 至少占满滚动视口一屏高度，主区域 flex:1 才能把页脚顶到底部 */
+.tool-shell-body > .json-tool,
+.tool-shell-body > .color-tool,
+.tool-shell-body > .timestamp-tool {
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.tool-shell-body > .tool-fallback {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 工具页在滚动区内略收紧页头占位 */
+.tool-shell-body .eth-tool-header {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .tool-shell-body .eth-tool-header {
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* 短内容时页脚贴在滚动区底；max(…,auto) 保证与主内容之间至少留一截间距 */
+.tool-shell-body .eth-tool-footer {
+  margin-top: max(1.5rem, auto);
+  padding-top: 1rem;
+  flex-shrink: 0;
 }

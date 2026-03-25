@@ -5,7 +5,6 @@ const siteLocales = {
   zh: {
     homeTitle: 'Easy Tools',
     homeLead: '开发者常用小工具，单页入口，持续扩展。',
-    homeFooter: '所有工具已收录在本仓库 src/tools/ 下，可按同样结构继续扩展。',
     navBack: '← 返回工具集',
     loading: '加载中…',
     cardCta: '进入 →',
@@ -22,7 +21,6 @@ const siteLocales = {
   en: {
     homeTitle: 'Easy Tools',
     homeLead: 'Handy dev utilities in one place. Easy to extend.',
-    homeFooter: 'All tools live under src/tools/ in this repo—add more the same way.',
     navBack: '← Back to hub',
     loading: 'Loading…',
     cardCta: 'Open →',

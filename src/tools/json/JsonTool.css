@@ -1,10 +1,15 @@
 .json-tool {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0.75rem 1rem 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .json-tool {
+    padding: 1rem 1.5rem 1.5rem;
+  }
 }
 
 .toolbar {
@@ -12,8 +17,8 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.65rem;
 }
 
 .toolbar-left,
@@ -110,9 +115,9 @@
 .editor-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 0.75rem;
   flex: 1;
-  min-height: 400px;
+  min-height: 0;
 }
 
 @media (max-width: 900px) {
@@ -177,8 +182,8 @@
 .panel-input,
 .panel-output {
   flex: 1;
-  min-height: 300px;
-  padding: 1rem;
+  min-height: clamp(140px, 26vh, 280px);
+  padding: 0.75rem 1rem;
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: 0.85rem;
   line-height: 1.6;

@@ -1,7 +1,7 @@
 .home {
   max-width: 960px;
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 3rem;
+  padding: 2.5rem 1.25rem 2rem;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -84,11 +84,4 @@
   margin-top: 0.5rem;
   font-size: 0.8rem;
   color: var(--accent);
-}
-
-.home-footer {
-  margin-top: 2.5rem;
-  text-align: center;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
 }

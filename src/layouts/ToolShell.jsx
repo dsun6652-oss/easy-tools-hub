@@ -31,9 +31,11 @@ export default function ToolShell() {
         </Link>
         <LangSwitch className="tool-shell-lang" />
       </nav>
-      <Suspense fallback={<ToolFallback />}>
-        <Tool />
-      </Suspense>
+      <div className="tool-shell-body">
+        <Suspense fallback={<ToolFallback />}>
+          <Tool />
+        </Suspense>
+      </div>
     </div>
   )
 }
