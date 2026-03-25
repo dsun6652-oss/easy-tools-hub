@@ -1,0 +1,1 @@
+import{r as c}from"./index-DzccQdb6.js";function f(t){const[i,u]=c.useState(!1),e=c.useRef(null),s=c.useCallback(async a=>{if(a)try{await navigator.clipboard.writeText(a),u(!0),e.current&&clearTimeout(e.current),e.current=window.setTimeout(()=>u(!1),2e3)}catch{t==null||t()}},[t]);return c.useEffect(()=>()=>{e.current&&clearTimeout(e.current)},[]),{copied:i,copy:s}}export{f as u};

@@ -1,4 +1,4 @@
-import{r as u,j as s}from"./index-BFWJz7oc.js";import{u as w,T as k,a as P}from"./useToolLocales-kamzeNFI.js";function N(e,n){const t=e.split(`
+import{r as u,j as s}from"./index-DzccQdb6.js";import{u as w,T as k,a as P}from"./useToolLocales-Bj3IGgCI.js";function N(e,n){const t=e.split(`
 `),i=n.split(`
 `),a=t.length,r=i.length,l=Array.from({length:a+1},()=>new Array(r+1).fill(0));for(let d=1;d<=a;d++)for(let c=1;c<=r;c++)t[d-1]===i[c-1]?l[d][c]=l[d-1][c-1]+1:l[d][c]=Math.max(l[d-1][c],l[d][c-1]);const h=[];let o=a,f=r;for(;o>0||f>0;)o>0&&f>0&&t[o-1]===i[f-1]?(h.unshift({type:"eq",left:t[o-1],right:i[f-1]}),o--,f--):o>0&&(f===0||l[o-1][f]>=l[o][f-1])?(h.unshift({type:"del",left:t[o-1],right:""}),o--):(h.unshift({type:"add",left:"",right:i[f-1]}),f--);return h}function p(e){const n=e.replace(/\r\n/g,`
 `).replace(/\r/g,`
