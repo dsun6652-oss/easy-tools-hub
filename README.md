@@ -83,6 +83,30 @@ npm run preview
 
 部署：`npm run deploy`（依赖 `gh-pages`，将 `dist` 推到 `gh-pages` 分支）。
 
+## Chrome 扩展（本地开发用）
+
+将同一套页面打成**可离线使用**的扩展：点击工具栏图标会在**新标签页**打开完整站点（`HashRouter`，路由形如 `index.html#/json`）。
+
+```bash
+npm run build:extension
+```
+
+1. 构建产物在 **`dist-extension/`**（含 `manifest.json`、`background.js` 与 Vite 输出）。  
+2. 打开 Chrome → **扩展程序** → **加载已解压的扩展程序** → 选择 **`dist-extension`** 文件夹。  
+3. 点击扩展图标即可新开标签使用。
+
+相关文件：
+
+| 文件 | 说明 |
+|------|------|
+| `vite.extension.config.js` | `base: './'`、`outDir: dist-extension`、不拷贝站点用 `public` |
+| `.env.chrome` | `VITE_CHROME_EXTENSION=true`，触发 `App.jsx` 使用 `HashRouter` |
+| `extension/manifest.json` | MV3；无 `default_popup`，由 `background.js` 响应点击开新标签 |
+| `extension/background.js` | `chrome.tabs.create` 打开 `index.html` |
+| `scripts/copy-extension-files.mjs` | 构建后把 manifest / background 复制进 `dist-extension` |
+
+上架 Chrome 网上应用店时需补充 `icons`、隐私说明等；本地加载可不配置图标（使用默认拼图图标）。扩展内若需自定义图标，可在 `extension/icons/` 放置 PNG 并在 `manifest.json` 中声明。
+
 ## 新增工具
 
 1. 新建目录 `src/tools/my-tool/`，默认导出页面组件（可参考现有工具）。  
@@ -92,6 +116,7 @@ npm run preview
 5. 在 `src/toolsRegistry.jsx` 的 `toolRoutes` 中增加 `path` 与 `lazy(() => import(...))`。  
 6. **SEO**：在 `public/sitemap.xml` 与 `index.html` 的 JSON-LD `ItemList` 中追加新工具 URL（保持 `numberOfItems` 与实际条数一致）。  
 7. 若需新的 npm 依赖，在本仓库根目录安装。  
+8. **Chrome 扩展**：一般无需改扩展配置；若改 `manifest` 版本号，请编辑 `extension/manifest.json` 后重新 `npm run build:extension`。  
 
 ## Agent skills（仅本仓库）
 

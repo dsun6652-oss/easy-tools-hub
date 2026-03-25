@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Easy Tools Hub",
+  "short_name": "Easy Tools",
+  "version": "1.0.0",
+  "description": "开发者小工具：JSON、颜色、时间戳、URL/Base64、密码、UUID、文本处理等，离线可用。",
+  "action": {
+    "default_title": "打开 Easy Tools Hub（新标签页）"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "offline_enabled": true
+}
