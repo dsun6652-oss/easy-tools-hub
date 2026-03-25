@@ -1,0 +1,372 @@
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { HexColorPicker } from 'react-colorful'
+import { ToolPageHeader } from '@hub/shared/components/ToolPageHeader'
+import { ToolFooter } from '@hub/shared/components/ToolFooter'
+import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
+import { locales } from './locales'
+import './ColorTool.css'
+
+function parseHex(str) {
+  const s = str.trim().replace(/^#/, '')
+  if (/^[0-9a-fA-F]{3}$/.test(s)) {
+    const r = parseInt(s[0] + s[0], 16)
+    const g = parseInt(s[1] + s[1], 16)
+    const b = parseInt(s[2] + s[2], 16)
+    return { r, g, b }
+  }
+  if (/^[0-9a-fA-F]{6}$/.test(s)) {
+    return {
+      r: parseInt(s.slice(0, 2), 16),
+      g: parseInt(s.slice(2, 4), 16),
+      b: parseInt(s.slice(4, 6), 16),
+    }
+  }
+  return null
+}
+
+function parseRgb(str) {
+  const m = str.trim().match(/^rgb\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/)
+  if (!m) return null
+  const r = Math.min(255, Math.max(0, parseInt(m[1], 10)))
+  const g = Math.min(255, Math.max(0, parseInt(m[2], 10)))
+  const b = Math.min(255, Math.max(0, parseInt(m[3], 10)))
+  return { r, g, b }
+}
+
+function parseHsl(str) {
+  const m = str
+    .trim()
+    .match(/^hsl\s*\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*\)$/)
+  if (!m) return null
+  const h = ((parseFloat(m[1]) % 360) + 360) % 360
+  const s = Math.min(100, Math.max(0, parseFloat(m[2])))
+  const l = Math.min(100, Math.max(0, parseFloat(m[3])))
+  return { h, s, l }
+}
+
+function rgbToHex(r, g, b) {
+  return '#' + [r, g, b].map((x) => x.toString(16).padStart(2, '0')).join('')
+}
+
+function rgbToHsl(r, g, b) {
+  r /= 255
+  g /= 255
+  b /= 255
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  let h
+  let s
+  const l = (max + min) / 2
+  if (max === min) {
+    h = s = 0
+  } else {
+    const d = max - min
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    switch (max) {
+      case r:
+        h = ((g - b) / d + (g < b ? 6 : 0)) / 6
+        break
+      case g:
+        h = ((b - r) / d + 2) / 6
+        break
+      default:
+        h = ((r - g) / d + 4) / 6
+    }
+  }
+  return {
+    h: Math.round(h * 360),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100),
+  }
+}
+
+function hslToRgb(h, s, l) {
+  h /= 360
+  s /= 100
+  l /= 100
+  let r
+  let g
+  let b
+  if (s === 0) {
+    r = g = b = l
+  } else {
+    const hue2rgb = (p, q, t) => {
+      let tt = t
+      if (tt < 0) tt += 1
+      if (tt > 1) tt -= 1
+      if (tt < 1 / 6) return p + (q - p) * 6 * tt
+      if (tt < 1 / 2) return q
+      if (tt < 2 / 3) return p + (q - p) * (2 / 3 - tt) * 6
+      return p
+    }
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+    const p = 2 * l - q
+    r = hue2rgb(p, q, h + 1 / 3)
+    g = hue2rgb(p, q, h)
+    b = hue2rgb(p, q, h - 1 / 3)
+  }
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255),
+  }
+}
+
+function parseColor(input) {
+  if (!input || !input.trim()) return null
+  const s = input.trim()
+  let rgb = parseHex(s) ?? parseRgb(s)
+  if (rgb) return rgb
+  const hsl = parseHsl(s)
+  if (hsl) return hslToRgb(hsl.h, hsl.s, hsl.l)
+  return null
+}
+
+const DEFAULT_HEX = '#58a6ff'
+const DEFAULT_RGB = 'rgb(88, 166, 255)'
+const DEFAULT_HSL = 'hsl(214, 100%, 67%)'
+
+export default function ColorTool() {
+  const { t } = useToolLocales(locales)
+  const pickerPopoverRef = useRef(null)
+  const [input, setInput] = useState('')
+  const [hex, setHex] = useState('')
+  const [rgb, setRgb] = useState('')
+  const [hsl, setHsl] = useState('')
+  const [previewColor, setPreviewColor] = useState(null)
+  const [error, setError] = useState('')
+  const [copiedFormat, setCopiedFormat] = useState(null)
+  const [pickerOpen, setPickerOpen] = useState(false)
+
+  const openColorPicker = useCallback(() => {
+    if (!previewColor) setInput(DEFAULT_HEX)
+    setPickerOpen(true)
+  }, [previewColor])
+
+  const closeColorPicker = useCallback(() => setPickerOpen(false), [])
+
+  const handlePickerColorChange = useCallback((hexValue) => {
+    setInput(hexValue)
+  }, [])
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (pickerOpen && pickerPopoverRef.current && !pickerPopoverRef.current.contains(e.target)) {
+        closeColorPicker()
+      }
+    }
+    if (pickerOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [pickerOpen, closeColorPicker])
+
+  const updateFromRgb = useCallback(({ r, g, b }) => {
+    setHex(rgbToHex(r, g, b))
+    setRgb(`rgb(${r}, ${g}, ${b})`)
+    const { h, s, l } = rgbToHsl(r, g, b)
+    setHsl(`hsl(${h}, ${s}%, ${l}%)`)
+    setPreviewColor(rgbToHex(r, g, b))
+  }, [])
+
+  useEffect(() => {
+    if (!input.trim()) {
+      setHex('')
+      setRgb('')
+      setHsl('')
+      setPreviewColor(null)
+      setError('')
+      return
+    }
+    const parsed = parseColor(input)
+    if (parsed) {
+      updateFromRgb(parsed)
+      setError('')
+    } else {
+      setHex('')
+      setRgb('')
+      setHsl('')
+      setPreviewColor(null)
+      setError(t('errorParse'))
+    }
+  }, [input, updateFromRgb, t])
+
+  const copyToClipboard = useCallback(
+    async (text) => {
+      if (!text) return
+      try {
+        await navigator.clipboard.writeText(text)
+        setCopiedFormat(text)
+        setTimeout(() => setCopiedFormat(null), 2000)
+      } catch {
+        setError(t('errorCopy'))
+      }
+    },
+    [t],
+  )
+
+  const clearAll = useCallback(() => {
+    setInput('')
+    setHex('')
+    setRgb('')
+    setHsl('')
+    setPreviewColor(null)
+    setError('')
+  }, [])
+
+  const resetToDefault = useCallback(() => {
+    setInput(DEFAULT_HEX)
+    setHex(rgbToHex(88, 166, 255))
+    setRgb(DEFAULT_RGB)
+    setHsl(DEFAULT_HSL)
+    setPreviewColor(DEFAULT_HEX)
+    setError('')
+  }, [])
+
+  const hasResult = hex || rgb || hsl
+
+  return (
+    <div className="color-tool">
+      <ToolPageHeader t={t} />
+
+      {pickerOpen && (
+        <div className="picker-overlay">
+          <div ref={pickerPopoverRef} className="picker-popover">
+            <div className="picker-header">
+              <span>{t('colorPicker')}</span>
+              <button type="button" onClick={closeColorPicker} className="btn btn-ghost picker-close">
+                {t('done')}
+              </button>
+            </div>
+            <HexColorPicker
+              color={previewColor || DEFAULT_HEX}
+              onChange={handlePickerColorChange}
+              className="picker-colorful"
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="toolbar">
+        <div className="toolbar-left">
+          <button type="button" onClick={resetToDefault} className="btn btn-secondary">
+            {t('resetExample')}
+          </button>
+        </div>
+        <div className="toolbar-right">
+          <button type="button" onClick={clearAll} className="btn btn-ghost">
+            {t('clear')}
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <div className="error-banner">
+          <span className="error-icon">!</span>
+          {error}
+        </div>
+      )}
+
+      <div className="color-container">
+        <div className="panel input-panel">
+          <div className="panel-header">
+            <span>{t('inputColor')}</span>
+          </div>
+          <div className="input-row">
+            <input
+              type="text"
+              className="color-input"
+              placeholder={t('inputPlaceholder')}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              spellCheck={false}
+            />
+            <div
+              className={`color-preview ${previewColor ? 'color-preview-clickable' : 'color-preview-placeholder'}`}
+              style={previewColor ? { backgroundColor: previewColor } : undefined}
+              onClick={openColorPicker}
+              onKeyDown={(e) => e.key === 'Enter' && openColorPicker()}
+              role="button"
+              tabIndex={0}
+              title={previewColor ? `${t('clickPicker')} (${previewColor})` : t('clickPicker')}
+            />
+          </div>
+        </div>
+
+        <div className="panel output-panel">
+          <div className="panel-header">
+            <span>{t('outputResult')}</span>
+          </div>
+          <div className="output-list">
+            {hex && (
+              <div className="output-item">
+                <span className="output-label">HEX</span>
+                <div className="output-value-row">
+                  <code className="output-value">{hex}</code>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(hex)}
+                    className="btn btn-copy"
+                    title={t('copyHex')}
+                  >
+                    {copiedFormat === hex ? t('copied') : t('copy')}
+                  </button>
+                </div>
+              </div>
+            )}
+            {rgb && (
+              <div className="output-item">
+                <span className="output-label">RGB</span>
+                <div className="output-value-row">
+                  <code className="output-value">{rgb}</code>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(rgb)}
+                    className="btn btn-copy"
+                    title={t('copyRgb')}
+                  >
+                    {copiedFormat === rgb ? t('copied') : t('copy')}
+                  </button>
+                </div>
+              </div>
+            )}
+            {hsl && (
+              <div className="output-item">
+                <span className="output-label">HSL</span>
+                <div className="output-value-row">
+                  <code className="output-value">{hsl}</code>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(hsl)}
+                    className="btn btn-copy"
+                    title={t('copyHsl')}
+                  >
+                    {copiedFormat === hsl ? t('copied') : t('copy')}
+                  </button>
+                </div>
+              </div>
+            )}
+            {!hasResult && <span className="placeholder">{t('placeholder')}</span>}
+          </div>
+        </div>
+      </div>
+
+      {previewColor && (
+        <div className="preview-block">
+          <div
+            className="preview-color-block preview-color-block-clickable"
+            style={{ backgroundColor: previewColor }}
+            onClick={openColorPicker}
+            onKeyDown={(e) => e.key === 'Enter' && openColorPicker()}
+            role="button"
+            tabIndex={0}
+            title={t('clickPicker')}
+          />
+          <span className="preview-label">{t('previewHint')}</span>
+        </div>
+      )}
+
+      <ToolFooter t={t} />
+    </div>
+  )
+}

@@ -1,0 +1,94 @@
+.home {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 3rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-header {
+  margin-bottom: 2.25rem;
+}
+
+.home-header-bar {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+}
+
+.home-header-text {
+  text-align: center;
+  padding: 0 3.5rem;
+}
+
+.home-header h1 {
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.home-lang-switch {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.home-lead {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.tool-grid {
+  list-style: none;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  flex: 1;
+}
+
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 1.25rem 1.35rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.tool-card:hover {
+  border-color: var(--accent);
+  background: var(--bg-tertiary);
+}
+
+.tool-card-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.tool-card-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.tool-card-cta {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.home-footer {
+  margin-top: 2.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}

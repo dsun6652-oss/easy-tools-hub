@@ -1,0 +1,16 @@
+.eth-lang-switch {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  font-family: inherit;
+}
+
+.eth-lang-switch:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}

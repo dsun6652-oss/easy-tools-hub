@@ -1,0 +1,62 @@
+.eth-tool-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .eth-tool-header {
+    margin-bottom: 2rem;
+  }
+}
+
+.eth-tool-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+@media (min-width: 768px) {
+  .eth-tool-header h1 {
+    font-size: 1.75rem;
+  }
+}
+
+.eth-tool-subtitle {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+@media (min-width: 768px) {
+  .eth-tool-subtitle {
+    font-size: 0.9rem;
+  }
+}
+
+.eth-tool-footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.eth-tool-footer__sponsor {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.eth-tool-footer__link {
+  margin-left: 0.25rem;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.eth-tool-footer__link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
