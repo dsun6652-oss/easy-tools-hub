@@ -2,7 +2,9 @@ import { useI18nLang } from '@hub/shared/i18n/I18nContext'
 import { useSiteLocales } from '@hub/shared/i18n/siteLocales'
 import './LangSwitch.css'
 
-export function LangSwitch({ className = '' }) {
+type LangSwitchProps = { className?: string }
+
+export function LangSwitch({ className = '' }: LangSwitchProps) {
   const { lang, setLang } = useI18nLang()
   const site = useSiteLocales()
   const next = lang === 'zh' ? 'en' : 'zh'

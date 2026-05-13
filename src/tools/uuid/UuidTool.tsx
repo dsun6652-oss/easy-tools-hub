@@ -7,11 +7,11 @@ import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
 import { randomUuidV4Batch } from './uuidV4'
 import { locales } from './locales'
 
-const COUNT_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const COUNT_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
 
 export default function UuidTool() {
   const { t } = useToolLocales(locales)
-  const [count, setCount] = useState(1)
+  const [count, setCount] = useState<number>(1)
   const [text, setText] = useState('')
   const [error, setError] = useState('')
 

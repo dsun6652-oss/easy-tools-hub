@@ -24,22 +24,22 @@
 
 ## 技术栈
 
-- React 18、React Router 6、Vite 5  
+- React 18、React Router 6、Vite 5、**TypeScript**  
 - 深色主题 CSS 变量（`theme.css`）  
-- 国际化：`I18nContext` + 各工具 `locales.js` + `siteLocales.js`
+- 国际化：`I18nContext` + 各工具 `locales.ts` + `siteLocales.ts`
 
 ## 仓库结构
 
-- `src/pages/Home.jsx`：首页与工具卡片  
-- `src/toolsRegistry.jsx`：路由注册表（路径、懒加载组件）  
-- `src/tools/<工具名>/`：各工具页面、`locales.js`；**仅在无可复用类名时**再增加专属 CSS（如 JSON 高亮、颜色面板）  
+- `src/pages/Home.tsx`：首页与工具卡片  
+- `src/toolsRegistry.tsx`：路由注册表（路径、懒加载组件）  
+- `src/tools/<工具名>/`：各工具页面、`locales.ts`；**仅在无可复用类名时**再增加专属 CSS（如 JSON 高亮、颜色面板）  
 - `src/shared/`：公共能力  
-  - `styles/tool-page.css`：工具页布局（`main.jsx` 已引入）。根节点使用 **`eth-tool-page`**，优先使用 `.toolbar`、`.editor-container`、`.panel*`、`.eth-tool-options`、`.eth-tool-check` 等（见该文件顶部注释）  
-  - `i18n/I18nContext.jsx`：全局语言（`localStorage` 键 `easy-tools-hub:lang`）与 `I18nProvider`  
-  - `i18n/siteLocales.js`：首页、顶栏、工具卡片等多语言文案  
-  - `i18n/useToolLocales.js`：各工具 `locales.js` 与全局语言绑定，得到 `t`  
-  - `components/LangSwitch.jsx`、`ToolPageHeader.jsx`、`ToolFooter.jsx`、`ToolErrorBanner.jsx`  
-  - `hooks/useCopyWithFeedback.js`  
+  - `styles/tool-page.css`：工具页布局（`main.tsx` 已引入）。根节点使用 **`eth-tool-page`**，优先使用 `.toolbar`、`.editor-container`、`.panel*`、`.eth-tool-options`、`.eth-tool-check` 等（见该文件顶部注释）  
+  - `i18n/I18nContext.tsx`：全局语言（`localStorage` 键 `easy-tools-hub:lang`）与 `I18nProvider`  
+  - `i18n/siteLocales.ts`：首页、顶栏、工具卡片等多语言文案  
+  - `i18n/useToolLocales.ts`：各工具 `locales.ts` 与全局语言绑定，得到 `t`  
+  - `components/LangSwitch.tsx`、`ToolPageHeader.tsx`、`ToolFooter.tsx`、`ToolErrorBanner.tsx`  
+  - `hooks/useCopyWithFeedback.ts`  
   - `theme.css`：全局主题变量  
 - `public/robots.txt`、`public/sitemap.xml`：爬虫与站点地图（见下文 SEO）  
 - `index.html`：标题、描述、Open Graph、Twitter Card、JSON-LD  
@@ -74,7 +74,7 @@ npm run dev
 ```
 
 - 开发：`vite` 默认 `base` 为 `/`  
-- 生产构建：`vite.config.js` 中 `base` 为 `/easy-tools-hub/`，与 `homepage` 一致（GitHub Pages 子路径）  
+- 生产构建：`vite.config.ts` 中 `base` 为 `/easy-tools-hub/`，与 `homepage` 一致（GitHub Pages 子路径）；`npm run build` 会先执行 `tsc --noEmit` 做类型检查  
 
 ```bash
 npm run build
@@ -99,8 +99,8 @@ npm run build:extension
 
 | 文件 | 说明 |
 |------|------|
-| `vite.extension.config.js` | `base: './'`、`outDir: dist-extension`、不拷贝站点用 `public` |
-| `.env.chrome` | `VITE_CHROME_EXTENSION=true`，触发 `App.jsx` 使用 `HashRouter` |
+| `vite.extension.config.ts` | `base: './'`、`outDir: dist-extension`、不拷贝站点用 `public` |
+| `.env.chrome` | `VITE_CHROME_EXTENSION=true`，触发 `App.tsx` 使用 `HashRouter` |
 | `extension/manifest.json` | MV3；无 `default_popup`，由 `background.js` 响应点击开新标签 |
 | `extension/background.js` | `chrome.tabs.create` 打开 `index.html` |
 | `scripts/copy-extension-files.mjs` | 构建后把 manifest / background 复制进 `dist-extension` |
@@ -110,10 +110,10 @@ npm run build:extension
 ## 新增工具
 
 1. 新建目录 `src/tools/my-tool/`，默认导出页面组件（可参考现有工具）。  
-2. 添加 `locales.js`（zh/en），在组件内使用 `useToolLocales(locales)` 得到 `t`。  
-3. 在 `src/shared/i18n/siteLocales.js` 的 `zh.tools` / `en.tools` 下增加与路由 `path` 一致的 key 及 `title`、`description`。  
+2. 添加 `locales.ts`（zh/en），在组件内使用 `useToolLocales(locales)` 得到 `t`。  
+3. 在 `src/shared/i18n/siteLocales.ts` 的 `zh.tools` / `en.tools` 下增加与路由 `path` 一致的 key 及 `title`、`description`。  
 4. 根节点使用 `<div className="eth-tool-page">`，配合 `ToolPageHeader` / `ToolFooter`，并优先复用 `tool-page.css` 中的类名。  
-5. 在 `src/toolsRegistry.jsx` 的 `toolRoutes` 中增加 `path` 与 `lazy(() => import(...))`。  
+5. 在 `src/toolsRegistry.tsx` 的 `toolRoutes` 中增加 `path` 与 `lazy(() => import(...))`。  
 6. **SEO**：在 `public/sitemap.xml` 与 `index.html` 的 JSON-LD `ItemList` 中追加新工具 URL（保持 `numberOfItems` 与实际条数一致）。  
 7. 若需新的 npm 依赖，在本仓库根目录安装。  
 8. **Chrome 扩展**：一般无需改扩展配置；若改 `manifest` 版本号，请编辑 `extension/manifest.json` 后重新 `npm run build:extension`。  

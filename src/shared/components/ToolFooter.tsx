@@ -1,4 +1,6 @@
-export function ToolFooter({ t }) {
+type ToolFooterProps = { t: (key: string) => string }
+
+export function ToolFooter({ t }: ToolFooterProps) {
   return (
     <footer className="eth-tool-footer">
       <span>{t('footerDesc')}</span>

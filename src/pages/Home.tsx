@@ -21,7 +21,7 @@ export default function Home() {
 
       <ul className="tool-grid">
         {toolRoutes.map(({ path }) => {
-          const tool = site.tools[path]
+          const tool = site.tools[path as keyof typeof site.tools]
           if (!tool) return null
           return (
             <li key={path}>

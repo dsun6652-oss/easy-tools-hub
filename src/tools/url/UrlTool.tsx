@@ -4,10 +4,9 @@ import { ToolFooter } from '@hub/shared/components/ToolFooter'
 import { ToolErrorBanner } from '@hub/shared/components/ToolErrorBanner'
 import { useCopyWithFeedback } from '@hub/shared/hooks/useCopyWithFeedback'
 import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
-import { utf8ToBase64, base64ToUtf8 } from './base64Utf8'
 import { locales } from './locales'
 
-export default function Base64Tool() {
+export default function UrlTool() {
   const { t } = useToolLocales(locales)
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
@@ -20,9 +19,9 @@ export default function Base64Tool() {
       return
     }
     try {
-      setOutput(utf8ToBase64(input))
-    } catch (e) {
-      setError(e?.message || t('errorEncode'))
+      setOutput(encodeURIComponent(input))
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : t('errorEncode'))
       setOutput('')
     }
   }, [input, t])
@@ -34,7 +33,7 @@ export default function Base64Tool() {
       return
     }
     try {
-      setOutput(base64ToUtf8(input))
+      setOutput(decodeURIComponent(input))
     } catch {
       setError(t('errorDecode'))
       setOutput('')

@@ -1,18 +1,34 @@
-import { computeLineDiff } from './lineDiff'
+import { computeLineDiff, type LineDiffOp } from './lineDiff'
+
+export type WordDiffPart = { type: 'eq' | 'del' | 'add'; text: string }
+
+export type LineUiRow = {
+  mode: 'line'
+  leftText: string
+  rightText: string
+  kind: { left: 'eq' | 'del' | 'pad' | 'add'; right: 'eq' | 'del' | 'pad' | 'add' }
+}
+
+export type WordUiRow = {
+  mode: 'word'
+  unified: WordDiffPart[]
+}
+
+export type UiRow = LineUiRow | WordUiRow
 
 /** trim 后无换行则视为单段，直接走词/字级 diff，避免行级「整段删除+整段新增」 */
-export function isEffectivelySingleLine(text) {
+export function isEffectivelySingleLine(text: string) {
   const t = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim()
   return t.length === 0 || !/[\n\v\f\u2028\u2029]/.test(t)
 }
 
-function isWhitespaceCodePoint(cp) {
+function isWhitespaceCodePoint(cp: number) {
   if (cp === 9 || cp === 10 || cp === 11 || cp === 12 || cp === 13 || cp === 32 || cp === 133 || cp === 160) return true
   return /\s/u.test(String.fromCodePoint(cp))
 }
 
 /** CJK / 假名 / 韩文音节：按单字 token，便于只标差异字 */
-function isEastAsianUnit(cp) {
+function isEastAsianUnit(cp: number) {
   return (
     (cp >= 0x3040 && cp <= 0x30ff) ||
     (cp >= 0x3400 && cp <= 0x4dbf) ||
@@ -22,24 +38,25 @@ function isEastAsianUnit(cp) {
   )
 }
 
-function isWordCodePoint(cp) {
+function isWordCodePoint(cp: number) {
   const ch = String.fromCodePoint(cp)
   return /[\p{L}\p{N}]/u.test(ch) || ch === "'" || ch === '-' || ch === '_'
 }
 
 /** 英文连续词、中日韩单字、空白、其余单码点各为 token */
-export function tokenizeForDiff(s) {
-  const tokens = []
+export function tokenizeForDiff(s: string) {
+  const tokens: string[] = []
   let i = 0
   while (i < s.length) {
     const cp = s.codePointAt(i)
+    if (cp === undefined) break
     const w = cp > 0xffff ? 2 : 1
 
     if (isWhitespaceCodePoint(cp)) {
       let j = i
       while (j < s.length) {
         const cpj = s.codePointAt(j)
-        if (!isWhitespaceCodePoint(cpj)) break
+        if (cpj === undefined || !isWhitespaceCodePoint(cpj)) break
         j += cpj > 0xffff ? 2 : 1
       }
       tokens.push(s.slice(i, j))
@@ -57,7 +74,7 @@ export function tokenizeForDiff(s) {
       let j = i
       while (j < s.length) {
         const cpj = s.codePointAt(j)
-        if (!isWordCodePoint(cpj)) break
+        if (cpj === undefined || !isWordCodePoint(cpj)) break
         j += cpj > 0xffff ? 2 : 1
       }
       tokens.push(s.slice(i, j))
@@ -71,14 +88,14 @@ export function tokenizeForDiff(s) {
   return tokens
 }
 
-function lcsUnifiedParts(tokensA, tokensB) {
+function lcsUnifiedParts(tokensA: string[], tokensB: string[]) {
   const a = tokensA
   const b = tokensB
   const n = a.length
   const m = b.length
-  if (n === 0 && m === 0) return []
+  if (n === 0 && m === 0) return [] as WordDiffPart[]
 
-  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0))
+  const dp = Array.from({ length: n + 1 }, () => new Array<number>(m + 1).fill(0))
   for (let i = 1; i <= n; i++) {
     for (let j = 1; j <= m; j++) {
       if (a[i - 1] === b[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1
@@ -86,7 +103,7 @@ function lcsUnifiedParts(tokensA, tokensB) {
     }
   }
 
-  const raw = []
+  const raw: WordDiffPart[] = []
   let i = n
   let j = m
   while (i > 0 || j > 0) {
@@ -106,8 +123,8 @@ function lcsUnifiedParts(tokensA, tokensB) {
   return mergeAdjacentParts(raw)
 }
 
-function mergeAdjacentParts(parts) {
-  const out = []
+function mergeAdjacentParts(parts: WordDiffPart[]) {
+  const out: WordDiffPart[] = []
   for (const p of parts) {
     const last = out[out.length - 1]
     if (last && last.type === p.type) {
@@ -120,11 +137,11 @@ function mergeAdjacentParts(parts) {
 }
 
 /** 词/字级统一 diff（供左右栏渲染） */
-export function computeWordUnifiedParts(textA, textB) {
+export function computeWordUnifiedParts(textA: string, textB: string) {
   return lcsUnifiedParts(tokenizeForDiff(textA), tokenizeForDiff(textB))
 }
 
-function toLineRow(r) {
+function toLineRow(r: LineDiffOp): LineUiRow {
   if (r.type === 'eq') {
     return {
       mode: 'line',
@@ -153,13 +170,13 @@ function toLineRow(r) {
  * 单段（trim 后无换行）直接全文词/字级 diff。
  * 多行则先行对齐，再对「删一行+增一行」且各自为单段的内容做词/字级合并。
  */
-export function buildUiRows(textA, textB) {
+export function buildUiRows(textA: string, textB: string): UiRow[] {
   if (isEffectivelySingleLine(textA) && isEffectivelySingleLine(textB)) {
     return [{ mode: 'word', unified: computeWordUnifiedParts(textA, textB) }]
   }
 
   const raw = computeLineDiff(textA, textB)
-  const out = []
+  const out: UiRow[] = []
   let i = 0
   while (i < raw.length) {
     const cur = raw[i]

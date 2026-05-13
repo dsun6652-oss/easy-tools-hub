@@ -2,11 +2,13 @@ import { useState, useCallback } from 'react'
 import { ToolPageHeader } from '@hub/shared/components/ToolPageHeader'
 import { ToolFooter } from '@hub/shared/components/ToolFooter'
 import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
-import { buildUiRows } from './wordDiff'
+import { buildUiRows, type UiRow, type WordDiffPart } from './wordDiff'
 import { locales } from './locales'
 import './TextDiffTool.css'
 
-function WordLine({ unified, side }) {
+type Side = 'left' | 'right'
+
+function WordLine({ unified, side }: { unified: WordDiffPart[]; side: Side }) {
   if (unified.length === 0) {
     return (
       <div className="diff-line diff-line--eq" aria-hidden>
@@ -31,7 +33,7 @@ function WordLine({ unified, side }) {
   )
 }
 
-function DiffPane({ rows, side }) {
+function DiffPane({ rows, side }: { rows: UiRow[]; side: Side }) {
   return (
     <pre className="diff-pre" aria-readonly>
       {rows.map((row, i) =>
@@ -52,7 +54,7 @@ export default function TextDiffTool() {
   const [left, setLeft] = useState('')
   const [right, setRight] = useState('')
   const [showDiff, setShowDiff] = useState(false)
-  const [displayRows, setDisplayRows] = useState([])
+  const [displayRows, setDisplayRows] = useState<UiRow[]>([])
 
   const runCompare = useCallback(() => {
     setDisplayRows(buildUiRows(left, right))

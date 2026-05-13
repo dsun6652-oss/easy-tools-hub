@@ -7,7 +7,10 @@ import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
 import { locales } from './locales'
 import './ColorTool.css'
 
-function parseHex(str) {
+type Rgb = { r: number; g: number; b: number }
+type Hsl = { h: number; s: number; l: number }
+
+function parseHex(str: string): Rgb | null {
   const s = str.trim().replace(/^#/, '')
   if (/^[0-9a-fA-F]{3}$/.test(s)) {
     const r = parseInt(s[0] + s[0], 16)
@@ -25,7 +28,7 @@ function parseHex(str) {
   return null
 }
 
-function parseRgb(str) {
+function parseRgb(str: string): Rgb | null {
   const m = str.trim().match(/^rgb\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/)
   if (!m) return null
   const r = Math.min(255, Math.max(0, parseInt(m[1], 10)))
@@ -34,7 +37,7 @@ function parseRgb(str) {
   return { r, g, b }
 }
 
-function parseHsl(str) {
+function parseHsl(str: string): Hsl | null {
   const m = str
     .trim()
     .match(/^hsl\s*\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*\)$/)
@@ -45,18 +48,18 @@ function parseHsl(str) {
   return { h, s, l }
 }
 
-function rgbToHex(r, g, b) {
+function rgbToHex(r: number, g: number, b: number) {
   return '#' + [r, g, b].map((x) => x.toString(16).padStart(2, '0')).join('')
 }
 
-function rgbToHsl(r, g, b) {
+function rgbToHsl(r: number, g: number, b: number) {
   r /= 255
   g /= 255
   b /= 255
   const max = Math.max(r, g, b)
   const min = Math.min(r, g, b)
-  let h
-  let s
+  let h = 0
+  let s = 0
   const l = (max + min) / 2
   if (max === min) {
     h = s = 0
@@ -81,17 +84,17 @@ function rgbToHsl(r, g, b) {
   }
 }
 
-function hslToRgb(h, s, l) {
+function hslToRgb(h: number, s: number, l: number): Rgb {
   h /= 360
   s /= 100
   l /= 100
-  let r
-  let g
-  let b
+  let r: number
+  let g: number
+  let b: number
   if (s === 0) {
     r = g = b = l
   } else {
-    const hue2rgb = (p, q, t) => {
+    const hue2rgb = (p: number, q: number, t: number) => {
       let tt = t
       if (tt < 0) tt += 1
       if (tt > 1) tt -= 1
@@ -113,11 +116,11 @@ function hslToRgb(h, s, l) {
   }
 }
 
-function parseColor(input) {
+function parseColor(input: string): Rgb | null {
   if (!input || !input.trim()) return null
   const s = input.trim()
-  let rgb = parseHex(s) ?? parseRgb(s)
-  if (rgb) return rgb
+  const rgbFromHexOrRgb = parseHex(s) ?? parseRgb(s)
+  if (rgbFromHexOrRgb) return rgbFromHexOrRgb
   const hsl = parseHsl(s)
   if (hsl) return hslToRgb(hsl.h, hsl.s, hsl.l)
   return null
@@ -129,14 +132,14 @@ const DEFAULT_HSL = 'hsl(214, 100%, 67%)'
 
 export default function ColorTool() {
   const { t } = useToolLocales(locales)
-  const pickerPopoverRef = useRef(null)
+  const pickerPopoverRef = useRef<HTMLDivElement>(null)
   const [input, setInput] = useState('')
   const [hex, setHex] = useState('')
   const [rgb, setRgb] = useState('')
   const [hsl, setHsl] = useState('')
-  const [previewColor, setPreviewColor] = useState(null)
+  const [previewColor, setPreviewColor] = useState<string | null>(null)
   const [error, setError] = useState('')
-  const [copiedFormat, setCopiedFormat] = useState(null)
+  const [copiedFormat, setCopiedFormat] = useState<string | null>(null)
   const [pickerOpen, setPickerOpen] = useState(false)
 
   const openColorPicker = useCallback(() => {
@@ -146,13 +149,19 @@ export default function ColorTool() {
 
   const closeColorPicker = useCallback(() => setPickerOpen(false), [])
 
-  const handlePickerColorChange = useCallback((hexValue) => {
+  const handlePickerColorChange = useCallback((hexValue: string) => {
     setInput(hexValue)
   }, [])
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (pickerOpen && pickerPopoverRef.current && !pickerPopoverRef.current.contains(e.target)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target
+      if (
+        pickerOpen &&
+        pickerPopoverRef.current &&
+        target instanceof Node &&
+        !pickerPopoverRef.current.contains(target)
+      ) {
         closeColorPicker()
       }
     }
@@ -162,7 +171,7 @@ export default function ColorTool() {
     }
   }, [pickerOpen, closeColorPicker])
 
-  const updateFromRgb = useCallback(({ r, g, b }) => {
+  const updateFromRgb = useCallback(({ r, g, b }: Rgb) => {
     setHex(rgbToHex(r, g, b))
     setRgb(`rgb(${r}, ${g}, ${b})`)
     const { h, s, l } = rgbToHsl(r, g, b)
@@ -193,7 +202,7 @@ export default function ColorTool() {
   }, [input, updateFromRgb, t])
 
   const copyToClipboard = useCallback(
-    async (text) => {
+    async (text: string) => {
       if (!text) return
       try {
         await navigator.clipboard.writeText(text)

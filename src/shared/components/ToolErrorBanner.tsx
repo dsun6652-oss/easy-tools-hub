@@ -1,4 +1,6 @@
-export function ToolErrorBanner({ message }) {
+type ToolErrorBannerProps = { message?: string }
+
+export function ToolErrorBanner({ message }: ToolErrorBannerProps) {
   if (!message) return null
   return (
     <div className="error-banner" role="alert">

@@ -4,41 +4,27 @@ import { ToolFooter } from '@hub/shared/components/ToolFooter'
 import { ToolErrorBanner } from '@hub/shared/components/ToolErrorBanner'
 import { useCopyWithFeedback } from '@hub/shared/hooks/useCopyWithFeedback'
 import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
+import { caseModes, type CaseMode } from './caseTransforms'
 import { locales } from './locales'
 
-export default function UrlTool() {
+export default function TextCaseTool() {
   const { t } = useToolLocales(locales)
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
 
-  const runEncode = useCallback(() => {
-    setError('')
-    if (!input.length) {
-      setOutput('')
-      return
-    }
-    try {
-      setOutput(encodeURIComponent(input))
-    } catch (e) {
-      setError(e?.message || t('errorEncode'))
-      setOutput('')
-    }
-  }, [input, t])
-
-  const runDecode = useCallback(() => {
-    setError('')
-    if (!input.length) {
-      setOutput('')
-      return
-    }
-    try {
-      setOutput(decodeURIComponent(input))
-    } catch {
-      setError(t('errorDecode'))
-      setOutput('')
-    }
-  }, [input, t])
+  const apply = useCallback(
+    (mode: CaseMode) => {
+      setError('')
+      if (!input.length) {
+        setOutput('')
+        return
+      }
+      const fn = caseModes[mode]
+      setOutput(fn(input))
+    },
+    [input],
+  )
 
   const onCopyError = useCallback(() => setError(t('errorCopy')), [t])
   const { copied, copy } = useCopyWithFeedback(onCopyError)
@@ -53,13 +39,19 @@ export default function UrlTool() {
     <div className="eth-tool-page">
       <ToolPageHeader t={t} />
 
-      <div className="toolbar">
+      <div className="toolbar toolbar--responsive">
         <div className="toolbar-left">
-          <button type="button" onClick={runEncode} className="btn btn-primary">
-            {t('encode')}
+          <button type="button" onClick={() => apply('upper')} className="btn btn-primary">
+            {t('upper')}
           </button>
-          <button type="button" onClick={runDecode} className="btn btn-secondary">
-            {t('decode')}
+          <button type="button" onClick={() => apply('lower')} className="btn btn-secondary">
+            {t('lower')}
+          </button>
+          <button type="button" onClick={() => apply('title')} className="btn btn-secondary">
+            {t('titleCase')}
+          </button>
+          <button type="button" onClick={() => apply('camel')} className="btn btn-secondary">
+            {t('camelCase')}
           </button>
         </div>
         <div className="toolbar-right">

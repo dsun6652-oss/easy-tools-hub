@@ -1,6 +1,8 @@
 import './tool-chrome.css'
 
-export function ToolPageHeader({ t }) {
+type ToolPageHeaderProps = { t: (key: string) => string }
+
+export function ToolPageHeader({ t }: ToolPageHeaderProps) {
   return (
     <header className="eth-tool-header">
       <h1>{t('title')}</h1>

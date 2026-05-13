@@ -46,7 +46,7 @@ const siteLocales = {
       'text-diff': { title: 'Text diff', description: 'Two-pane line diff with highlights' },
     },
   },
-}
+} as const
 
 export function useSiteLocales() {
   const { lang } = useI18nLang()

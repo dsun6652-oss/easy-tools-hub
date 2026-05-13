@@ -1,12 +1,12 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 
 /** 写入剪贴板并在约 2s 内显示「已复制」反馈；失败时调用 onError */
-export function useCopyWithFeedback(onError) {
+export function useCopyWithFeedback(onError?: () => void) {
   const [copied, setCopied] = useState(false)
-  const timerRef = useRef(null)
+  const timerRef = useRef<number | null>(null)
 
   const copy = useCallback(
-    async (text) => {
+    async (text: string) => {
       if (!text) return
       try {
         await navigator.clipboard.writeText(text)

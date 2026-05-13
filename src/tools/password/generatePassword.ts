@@ -3,28 +3,30 @@ const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const DIGIT = '0123456789'
 const SYMBOL = '!@#$%^&*-_+=.,?'
 
-function pickIndex(max) {
+function pickIndex(max: number) {
   const buf = new Uint32Array(1)
   globalThis.crypto.getRandomValues(buf)
-  return buf[0] % max
+  return buf[0]! % max
 }
 
-function shuffle(arr) {
+function shuffle(arr: string[]) {
   const a = [...arr]
   for (let i = a.length - 1; i > 0; i--) {
     const j = pickIndex(i + 1)
-    ;[a[i], a[j]] = [a[j], a[i]]
+    ;[a[i], a[j]] = [a[j]!, a[i]!]
   }
   return a
 }
 
-/**
- * @param {number} length
- * @param {{ upper: boolean, lower: boolean, digit: boolean, symbol: boolean }} flags
- * @returns {{ ok: true, password: string } | { ok: false, reason: 'noCharset' | 'length' }}
- */
-export function generatePassword(length, { upper, lower, digit, symbol }) {
-  const categories = []
+export type CharsetFlags = { upper: boolean; lower: boolean; digit: boolean; symbol: boolean }
+
+export type GeneratePasswordResult =
+  | { ok: true; password: string }
+  | { ok: false; reason: 'noCharset' | 'length' }
+
+export function generatePassword(length: number, flags: CharsetFlags): GeneratePasswordResult {
+  const { upper, lower, digit, symbol } = flags
+  const categories: string[] = []
   if (lower) categories.push(LOWER)
   if (upper) categories.push(UPPER)
   if (digit) categories.push(DIGIT)
@@ -40,18 +42,18 @@ export function generatePassword(length, { upper, lower, digit, symbol }) {
   }
 
   const all = categories.join('')
-  const chars = []
+  const chars: string[] = []
 
   if (len >= categories.length) {
     for (const cat of categories) {
-      chars.push(cat[pickIndex(cat.length)])
+      chars.push(cat[pickIndex(cat.length)]!)
     }
     while (chars.length < len) {
-      chars.push(all[pickIndex(all.length)])
+      chars.push(all[pickIndex(all.length)]!)
     }
   } else {
     for (let i = 0; i < len; i++) {
-      chars.push(all[pickIndex(all.length)])
+      chars.push(all[pickIndex(all.length)]!)
     }
   }
 

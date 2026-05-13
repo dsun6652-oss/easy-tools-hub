@@ -6,7 +6,7 @@ import { useCopyWithFeedback } from '@hub/shared/hooks/useCopyWithFeedback'
 import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
 import { locales } from './locales'
 
-function timestampToBeijing(ts, isMs = true) {
+function timestampToBeijing(ts: string, isMs = true) {
   const ms = isMs ? Number(ts) : Number(ts) * 1000
   if (isNaN(ms) || ms < 0) return null
   const d = new Date(ms)
@@ -14,14 +14,14 @@ function timestampToBeijing(ts, isMs = true) {
   return d.toLocaleString('sv-SE', { timeZone: 'Asia/Shanghai' })
 }
 
-function dateToTimestamp(str, outputMs = true) {
+function dateToTimestamp(str: string, outputMs = true) {
   if (!str || !str.trim()) return null
   const s = str.trim()
   let dateStr = s
   const match = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:\s+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/)
   if (match && !/[+-]\d{2}:?\d{2}$|[Zz]$/.test(s)) {
-    const [, y, m, d, h = 0, min = 0, sec = 0] = match
-    const pad = (n) => String(n).padStart(2, '0')
+    const [, y, m, d, h = '0', min = '0', sec = '0'] = match
+    const pad = (n: string) => String(n).padStart(2, '0')
     dateStr = `${y}-${pad(m)}-${pad(d)}T${pad(h)}:${pad(min)}:${pad(sec)}+08:00`
   }
   const date = new Date(dateStr)
@@ -30,10 +30,13 @@ function dateToTimestamp(str, outputMs = true) {
   return outputMs ? ts : Math.floor(ts / 1000)
 }
 
+type Mode = 'ts2date' | 'date2ts'
+type Unit = 'ms' | 's'
+
 export default function TimestampTool() {
   const { t } = useToolLocales(locales)
-  const [mode, setMode] = useState('ts2date')
-  const [unit, setUnit] = useState('ms')
+  const [mode, setMode] = useState<Mode>('ts2date')
+  const [unit, setUnit] = useState<Unit>('ms')
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
@@ -107,7 +110,7 @@ export default function TimestampTool() {
           </button>
           <label className="unit-control">
             <span>{t('unit')}</span>
-            <select value={unit} onChange={(e) => setUnit(e.target.value)}>
+            <select value={unit} onChange={(e) => setUnit(e.target.value as Unit)}>
               <option value="ms">{t('ms')}</option>
               <option value="s">{t('s')}</option>
             </select>

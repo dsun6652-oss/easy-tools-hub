@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, type ChangeEvent } from 'react'
 import { ToolPageHeader } from '@hub/shared/components/ToolPageHeader'
 import { ToolFooter } from '@hub/shared/components/ToolFooter'
 import { ToolErrorBanner } from '@hub/shared/components/ToolErrorBanner'
@@ -9,7 +9,7 @@ import { locales } from './locales'
 
 export default function PasswordTool() {
   const { t } = useToolLocales(locales)
-  const [length, setLength] = useState(16)
+  const [length, setLength] = useState<number | ''>(16)
   const [useUpper, setUseUpper] = useState(true)
   const [useLower, setUseLower] = useState(true)
   const [useDigit, setUseDigit] = useState(true)
@@ -43,7 +43,7 @@ export default function PasswordTool() {
     setError('')
   }, [])
 
-  const onLengthChange = (e) => {
+  const onLengthChange = (e: ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value
     if (v === '') {
       setLength('')

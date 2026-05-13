@@ -1,16 +1,19 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 
 const STORAGE_KEY = 'easy-tools-hub:lang'
 
-const I18nContext = createContext(null)
+export type Lang = 'zh' | 'en'
 
-export function I18nProvider({ children }) {
-  const [lang, setLangState] = useState(() => {
+type I18nValue = { lang: Lang; setLang: (l: string) => void }
+
+const I18nContext = createContext<I18nValue | null>(null)
+
+export function I18nProvider({ children }: { children: ReactNode }) {
+  const [lang, setLangState] = useState<Lang>(() => {
     try {
-      return (
-        localStorage.getItem(STORAGE_KEY) ||
-        (navigator.language.startsWith('zh') ? 'zh' : 'en')
-      )
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (stored === 'zh' || stored === 'en') return stored
+      return navigator.language.startsWith('zh') ? 'zh' : 'en'
     } catch {
       return 'zh'
     }
@@ -25,7 +28,7 @@ export function I18nProvider({ children }) {
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en'
   }, [lang])
 
-  const setLang = useCallback((l) => {
+  const setLang = useCallback((l: string) => {
     setLangState(l === 'zh' ? 'zh' : 'en')
   }, [])
 

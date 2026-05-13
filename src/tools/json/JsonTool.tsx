@@ -7,6 +7,8 @@ import { useToolLocales } from '@hub/shared/i18n/useToolLocales'
 import { locales } from './locales'
 import './JsonTool.css'
 
+type OutputMode = 'json' | 'csv'
+
 export default function JsonTool() {
   const { t } = useToolLocales(locales)
   const [input, setInput] = useState('')
@@ -14,7 +16,7 @@ export default function JsonTool() {
   const [error, setError] = useState('')
   const [indent, setIndent] = useState(2)
   const [validationError, setValidationError] = useState('')
-  const [outputMode, setOutputMode] = useState('json')
+  const [outputMode, setOutputMode] = useState<OutputMode>('json')
 
   useEffect(() => {
     if (!input.trim()) {
@@ -24,19 +26,22 @@ export default function JsonTool() {
     try {
       JSON.parse(input)
       setValidationError('')
-    } catch (e) {
-      setValidationError(e.message || t('jsonSyntaxError'))
+    } catch (e: unknown) {
+      setValidationError(e instanceof Error ? e.message : t('jsonSyntaxError'))
     }
   }, [input, t])
 
   useEffect(() => {
-    if (outputMode !== 'json' || !output || !input.trim()) return
+    if (outputMode !== 'json' || !input.trim()) return
     try {
-      const parsed = JSON.parse(input)
+      const parsed = JSON.parse(input) as unknown
       const space = indent === 0 ? '\t' : indent
-      setOutput(JSON.stringify(parsed, null, space))
-    } catch {}
-  }, [indent])
+      const next = JSON.stringify(parsed, null, space)
+      setOutput((prev) => (prev === next ? prev : next))
+    } catch {
+      /* keep previous output */
+    }
+  }, [indent, input, outputMode])
 
   const formatJSON = useCallback(
     (minify = false) => {
@@ -47,12 +52,12 @@ export default function JsonTool() {
         return
       }
       try {
-        const parsed = JSON.parse(input)
+        const parsed = JSON.parse(input) as unknown
         const space = indent === 0 ? '\t' : indent
         const formatted = minify ? JSON.stringify(parsed) : JSON.stringify(parsed, null, space)
         setOutput(formatted)
-      } catch (e) {
-        setError(e.message || t('errorParse'))
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : t('errorParse'))
         setOutput('')
       }
     },
@@ -67,14 +72,14 @@ export default function JsonTool() {
       return
     }
     try {
-      const parsed = JSON.parse(input)
-      const rows = Array.isArray(parsed) ? parsed : [parsed]
+      const parsed = JSON.parse(input) as unknown
+      const rows: Record<string, unknown>[] = Array.isArray(parsed) ? (parsed as Record<string, unknown>[]) : [parsed as Record<string, unknown>]
       if (rows.length === 0) {
         setOutput('')
         return
       }
       const headers = [...new Set(rows.flatMap((r) => Object.keys(r)))]
-      const escapeCsv = (val) => {
+      const escapeCsv = (val: unknown) => {
         const str = val == null ? '' : typeof val === 'object' ? JSON.stringify(val) : String(val)
         if (str.includes(',') || str.includes('"') || str.includes('\n')) {
           return `"${str.replace(/"/g, '""')}"`
@@ -86,8 +91,8 @@ export default function JsonTool() {
         ...rows.map((row) => headers.map((h) => escapeCsv(row[h] ?? '')).join(',')),
       ]
       setOutput(lines.join('\n'))
-    } catch (e) {
-      setError(e.message || t('errorConvert'))
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : t('errorConvert'))
       setOutput('')
     }
   }, [input, t])
@@ -116,8 +121,8 @@ export default function JsonTool() {
     setValidationError('')
   }, [])
 
-  const highlightJSON = (str) => {
-    if (!str) return null
+  const highlightJSON = (str: string) => {
+    if (!str) return ''
     return str.replace(
       /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
       (match) => {
@@ -136,7 +141,7 @@ export default function JsonTool() {
     )
   }
 
-  const escapeHtml = (text) => {
+  const escapeHtml = (text: string) => {
     const div = document.createElement('div')
     div.textContent = text
     return div.innerHTML
